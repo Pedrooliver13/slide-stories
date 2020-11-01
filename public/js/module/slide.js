@@ -28,8 +28,8 @@ export class Slide {
     this.slideArray[index];
     this.slideIndexNav(index);
     this.changeActiveClass();
-    this.activeLoad();
     this.autoSlide();
+    this.activeLoad();
   }
 
   changeActiveClass() {
@@ -42,7 +42,9 @@ export class Slide {
   }
 
   activePrevSlide() {
-    if (this.index.prev != undefined) this.changeSlide(this.index.prev);
+    if (this.index.prev != undefined) {
+      this.changeSlide(this.index.prev);
+    }
   }
 
   activeNextSlide() {
@@ -63,13 +65,22 @@ export class Slide {
     this.slideArray.forEach(
       () => (this.divElement.innerHTML += `<span></span>`),
     );
-
     return this.wrapper.appendChild(this.divElement);
   }
 
   activeLoad() {
-    const divArray = [...this.divElement.children];
-    divArray[this.index.active].classList.add(this.activeClass);
+    this.divArray = [...this.divElement.children];
+   
+    this.divArray.forEach((item, index) => {
+      item.classList.remove('next', 'active');
+
+      if(index > this.index.active) {
+        item.classList.add('next');
+      }
+    });
+    
+
+    this.divArray[this.index.active].classList.add(this.activeClass);
   }
 
   addLoadEvent() {

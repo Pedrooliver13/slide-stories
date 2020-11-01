@@ -66,14 +66,14 @@ body {
   overflow: hidden;
 
   left: 0;
-  margin: 8px;
+  margin: 2px;
 
   max-width: 100%;
   width: 100px;
   height: 2px;
 }
 
-.slide__thumb span.active::after {
+.slide__thumb span::after {
   content: '';
   position: absolute;
   
@@ -81,9 +81,15 @@ body {
   width: 100%;
   height: 100%;
   background-color: #fff;
+}
 
+.slide__thumb span.active::after {
   transform: translateX(-100%);
   animation: show-slide 5s linear forwards;
+}
+
+.slide__thumb span.next::after {
+  transform: translateX(-100%);
 }
 
 @keyframes show-slide {
