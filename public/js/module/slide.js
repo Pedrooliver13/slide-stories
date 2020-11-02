@@ -3,9 +3,6 @@ export class Slide {
     this.slide = document.querySelector(slide);
     this.wrapper = document.querySelector(wrapper);
     this.activeClass = "active";
-
-    this.dist = { moviment: 0, startX: 0, finalPosition: 0 };
-    this.changeEvent = new Event("changeEvent");
   }
 
   slideConfig() {
@@ -53,9 +50,10 @@ export class Slide {
     }
   }
 
-  autoSlide() {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(this.activeNextSlide, 5000);
+  autoSlide(time) {
+    clearTimeout(this.autoTime);
+    this.totalTime = time || 5000;
+    this.autoTime = setTimeout(this.activeNextSlide, this.totalTime);
   }
 
   addLoadChangeSlide() {
@@ -63,39 +61,76 @@ export class Slide {
     this.divElement.classList.add("slide__thumb");
 
     this.slideArray.forEach(
-      () => (this.divElement.innerHTML += `<span></span>`),
+      () => (this.divElement.innerHTML += `<span><div></div></span>`),
     );
     return this.wrapper.appendChild(this.divElement);
   }
 
   activeLoad() {
     this.divArray = [...this.divElement.children];
-   
+
     this.divArray.forEach((item, index) => {
-      item.classList.remove('next', 'active');
-
-      if(index > this.index.active) {
-        item.classList.add('next');
-      }
+      if (index < this.index.active) item.firstChild.style.width = "100%";
+      if (index > this.index.active) item.firstChild.style.width = "0%";
     });
-    
 
-    this.divArray[this.index.active].classList.add(this.activeClass);
+    this.progressBar();
   }
 
-  addLoadEvent() {
-    this.wrapper.addEventListener("changeEvent", () => this.activeLoad());
+  progressBar(widthIntial = 0) {
+    const total = "100%";
+    const insertTurbo = 0.51;
+    this.progressChild = this.divArray[this.index.active].firstChild;
+    
+    let start = widthIntial;
+
+    clearTimeout(this.timeBarProgress);
+    this.progressChild.style.width = widthIntial;
+
+    this.timeBarProgress = setInterval(() => {
+      start += insertTurbo;
+      this.progressChild.style.width = `${start}%`;
+
+      if (start > total) {
+        this.progressChild.style.width = `${total}`;
+        clearTimeout(this.timeBarProgress);
+      }
+    }, 25);
+  }
+
+  pauseSlide() {
+    clearInterval(this.timeBarProgress);
+    clearTimeout(this.autoTime);
+  }
+
+  startSlide() {
+    const widthInitial = this.progressChild.style.width;
+    const clearWidht = +widthInitial.replace("%", "");
+    const missingTime = 100 - clearWidht;
+    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+    
+    this.progressBar(clearWidht);
+    this.autoSlide(totalTime);
+  }
+
+  addSlideEvent() {
+    this.wrapper.addEventListener("mousedown", this.pauseSlide);
+    this.wrapper.addEventListener("mouseup", this.startSlide);
   }
 
   onBind() {
     this.activePrevSlide = this.activePrevSlide.bind(this);
     this.activeNextSlide = this.activeNextSlide.bind(this);
     this.activeLoad = this.activeLoad.bind(this);
+
+    this.pauseSlide = this.pauseSlide.bind(this);
+    this.startSlide = this.startSlide.bind(this);
   }
 
   init() {
     this.onBind();
     this.slideConfig();
+    this.addSlideEvent();
     this.addLoadChangeSlide();
     this.changeSlide(0);
 
