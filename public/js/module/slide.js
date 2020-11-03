@@ -39,16 +39,12 @@ export class Slide {
   }
 
   activePrevSlide(event) {
-    event.preventDefault();
-    
     if (this.index.prev != undefined) {
       this.changeSlide(this.index.prev);
     }
   }
 
   activeNextSlide(event) {
-    event.preventDefault();
-
     if (this.index.next != undefined) {
       return this.changeSlide(this.index.next);
     }
@@ -102,8 +98,9 @@ export class Slide {
   }
 
   pauseSlide(event) {
-    event.preventDefault();
-
+    if(event.type === 'mousedown')
+      event.preventDefault();
+    
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
     this.messagePause(true);
@@ -121,13 +118,18 @@ export class Slide {
     return this.wrapper.removeChild(this.wrapper.lastChild);
   }
 
-  restartSlide() {
-    const widthInitial = this.progressChild.style.width;
-    const clearWidht = +widthInitial.replace("%", "");
-    const missingTime = 100 - clearWidht;
-    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+  restartSlide(event) {
+    if(event.type === 'mouseup')
+      event.preventDefault();
 
-    this.progressBar(clearWidht);
+    const widthInitial = this.progressChild.style.width;
+    const clearWidth = Number(widthInitial.replace("%", ""));
+    const missingTime = 100 - clearWidth;
+    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+    
+    console.log(clearWidth);
+    
+    this.progressBar(clearWidth);
     this.autoSlide(totalTime);
     this.messagePause(false);
   }
@@ -173,8 +175,6 @@ export class SlideNav extends Slide {
 
   addControlsEvent() {
     this.prev.addEventListener("click", this.activePrevSlide);
-    this.prev.addEventListener("touchstart", this.activePrevSlide);
     this.next.addEventListener("click", this.activeNextSlide);
-    this.next.addEventListener("touchstart", this.activeNextSlide);
   }
 }
