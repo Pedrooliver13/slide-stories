@@ -46,8 +46,10 @@ export class Slide {
 
   activeNextSlide() {
     if (this.index.next != undefined) {
-      this.changeSlide(this.index.next);
+      return this.changeSlide(this.index.next);
     }
+
+    return this.changeSlide(0); 
   }
 
   autoSlide(time) {
@@ -78,7 +80,7 @@ export class Slide {
 
   progressBar(widthIntial = 0) {
     const total = "100%";
-    const insertTurbo = 0.5;
+    const insertTurbo = 0.5; // (totalTime / timeInterval) * 100;
     this.progressChild = this.divArray[this.index.active].firstChild;
 
     let start = widthIntial;
@@ -97,7 +99,9 @@ export class Slide {
     }, 25);
   }
 
-  pauseSlide() {
+  pauseSlide(event) {
+    event.preventDefault();
+    
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
     this.messagePause(true);
@@ -128,7 +132,9 @@ export class Slide {
 
   addSlideEvent() {
     this.wrapper.addEventListener("mousedown", this.pauseSlide);
+    this.wrapper.addEventListener("touchstart", this.pauseSlide);
     this.wrapper.addEventListener("mouseup", this.restartSlide);
+    this.wrapper.addEventListener("touchend", this.restartSlide);
   }
 
   onBind() {
