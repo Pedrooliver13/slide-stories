@@ -39,15 +39,17 @@ export class Slide {
   }
 
   activePrevSlide(event) {
+    event.preventDefault();
+    
     if (this.index.prev != undefined) {
-      event.preventDefault();
       this.changeSlide(this.index.prev);
     }
   }
 
   activeNextSlide(event) {
+    event.preventDefault();
+
     if (this.index.next != undefined) {
-      event.preventDefault();
       return this.changeSlide(this.index.next);
     }
   }
