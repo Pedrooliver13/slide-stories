@@ -127,8 +127,6 @@ export class Slide {
     const missingTime = 100 - clearWidth;
     const totalTime = Math.floor((this.totalTime * missingTime) / 100);
     
-    console.log(clearWidth);
-    
     this.progressBar(clearWidth);
     this.autoSlide(totalTime);
     this.messagePause(false);
