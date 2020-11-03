@@ -38,18 +38,18 @@ export class Slide {
     item.classList.add(this.activeClass);
   }
 
-  activePrevSlide() {
+  activePrevSlide(event) {
     if (this.index.prev != undefined) {
+      event.preventDefault();
       this.changeSlide(this.index.prev);
     }
   }
 
-  activeNextSlide() {
+  activeNextSlide(event) {
     if (this.index.next != undefined) {
+      event.preventDefault();
       return this.changeSlide(this.index.next);
     }
-
-    return this.changeSlide(0); 
   }
 
   autoSlide(time) {
@@ -101,7 +101,7 @@ export class Slide {
 
   pauseSlide(event) {
     event.preventDefault();
-    
+
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
     this.messagePause(true);
@@ -115,7 +115,7 @@ export class Slide {
     if (message) {
       return this.wrapper.appendChild(messageTarget);
     }
-    
+
     return this.wrapper.removeChild(this.wrapper.lastChild);
   }
 
@@ -171,6 +171,8 @@ export class SlideNav extends Slide {
 
   addControlsEvent() {
     this.prev.addEventListener("click", this.activePrevSlide);
+    this.prev.addEventListener("touchstart", this.activePrevSlide);
     this.next.addEventListener("click", this.activeNextSlide);
+    this.next.addEventListener("touchstart", this.activeNextSlide);
   }
 }
