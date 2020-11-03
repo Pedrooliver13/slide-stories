@@ -44,7 +44,7 @@ body {
   width: 40%;
   height: 100vh;
   
-  background: transparent;
+  background: none;
   border: none;
   outline: none;
 }
@@ -86,17 +86,33 @@ body {
   background-color: #fff;
 }
 
-/* .slide__thumb span.active div {
-  transform: translateX(-100%);
-}
+.slide__message {
+  position: absolute;
+  display: block;
+  text-transform: uppercase;
 
-.slide__thumb span.next div {
-  transform: translateX(-100%);
-}
-
-@keyframes show-slide {
-  to {
-    transform: initial;
-  }
-} */
+  display: flex;
+  align-items: center;
   
+  font-weight: bold;
+  font-size: 6px;
+  font-family: Arial, Helvetica, sans-serif;
+
+  border-radius: 8px;
+  background-color:#333333;
+  color: #fff;
+  padding: 4px;
+    
+  opacity: 0;
+  top: 16px;
+  right: 10px;
+  
+  animation: opacity-message 0s forwards;
+  animation-delay: .2s;
+}  
+
+@keyframes opacity-message {
+  to {
+    opacity: 1;
+  }
+}
