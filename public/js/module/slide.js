@@ -38,15 +38,15 @@ export class Slide {
     item.classList.add(this.activeClass);
   }
 
-  activePrevSlide() {
+  activePrevSlide(event) {
     if (this.index.prev != undefined) {
       this.changeSlide(this.index.prev);
     }
   }
 
-  activeNextSlide() {
+  activeNextSlide(event) {
     if (this.index.next != undefined) {
-      this.changeSlide(this.index.next);
+      return this.changeSlide(this.index.next);
     }
   }
 
@@ -78,7 +78,7 @@ export class Slide {
 
   progressBar(widthIntial = 0) {
     const total = "100%";
-    const insertTurbo = 0.5;
+    const insertTurbo = 0.5; // (totalTime / timeInterval) * 100;
     this.progressChild = this.divArray[this.index.active].firstChild;
 
     let start = widthIntial;
@@ -97,7 +97,10 @@ export class Slide {
     }, 25);
   }
 
-  pauseSlide() {
+  pauseSlide(event) {
+    if(event.type === 'mousedown')
+      event.preventDefault();
+    
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
     this.messagePause(true);
@@ -111,24 +114,31 @@ export class Slide {
     if (message) {
       return this.wrapper.appendChild(messageTarget);
     }
-    
+
     return this.wrapper.removeChild(this.wrapper.lastChild);
   }
 
-  restartSlide() {
-    const widthInitial = this.progressChild.style.width;
-    const clearWidht = +widthInitial.replace("%", "");
-    const missingTime = 100 - clearWidht;
-    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+  restartSlide(event) {
+    if(event.type === 'mouseup')
+      event.preventDefault();
 
-    this.progressBar(clearWidht);
+    const widthInitial = this.progressChild.style.width;
+    const clearWidth = Number(widthInitial.replace("%", ""));
+    const missingTime = 100 - clearWidth;
+    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+    
+    console.log(clearWidth);
+    
+    this.progressBar(clearWidth);
     this.autoSlide(totalTime);
     this.messagePause(false);
   }
 
   addSlideEvent() {
     this.wrapper.addEventListener("mousedown", this.pauseSlide);
+    this.wrapper.addEventListener("touchstart", this.pauseSlide);
     this.wrapper.addEventListener("mouseup", this.restartSlide);
+    this.wrapper.addEventListener("touchend", this.restartSlide);
   }
 
   onBind() {
