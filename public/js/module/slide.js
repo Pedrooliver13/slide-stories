@@ -38,16 +38,18 @@ export class Slide {
     item.classList.add(this.activeClass);
   }
 
-  activePrevSlide(event) {
+  activePrevSlide() {
     if (this.index.prev != undefined) {
       this.changeSlide(this.index.prev);
     }
   }
 
-  activeNextSlide(event) {
+  activeNextSlide() {
     if (this.index.next != undefined) {
       return this.changeSlide(this.index.next);
     }
+
+    return this.changeSlide(0);
   }
 
   autoSlide(time) {
