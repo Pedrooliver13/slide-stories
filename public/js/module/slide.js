@@ -68,7 +68,6 @@ export class Slide {
 
   activeLoad() {
     this.divArray = [...this.divElement.children];
-
     this.divArray.forEach((item, index) => {
       if (index < this.index.active) item.firstChild.style.width = "100%";
       if (index > this.index.active) item.firstChild.style.width = "0%";
@@ -79,9 +78,9 @@ export class Slide {
 
   progressBar(widthIntial = 0) {
     const total = "100%";
-    const insertTurbo = 0.51;
+    const insertTurbo = 0.5;
     this.progressChild = this.divArray[this.index.active].firstChild;
-    
+
     let start = widthIntial;
 
     clearTimeout(this.timeBarProgress);
@@ -101,21 +100,35 @@ export class Slide {
   pauseSlide() {
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
+    this.messagePause(true);
   }
 
-  startSlide() {
+  messagePause(message = false) {
+    const messageTarget = document.createElement("div");
+    messageTarget.innerHTML = "Pausado";
+    messageTarget.classList.add("slide__message");
+
+    if (message) {
+      return this.wrapper.appendChild(messageTarget);
+    }
+    
+    return this.wrapper.removeChild(this.wrapper.lastChild);
+  }
+
+  restartSlide() {
     const widthInitial = this.progressChild.style.width;
     const clearWidht = +widthInitial.replace("%", "");
     const missingTime = 100 - clearWidht;
     const totalTime = Math.floor((this.totalTime * missingTime) / 100);
-    
+
     this.progressBar(clearWidht);
     this.autoSlide(totalTime);
+    this.messagePause(false);
   }
 
   addSlideEvent() {
     this.wrapper.addEventListener("mousedown", this.pauseSlide);
-    this.wrapper.addEventListener("mouseup", this.startSlide);
+    this.wrapper.addEventListener("mouseup", this.restartSlide);
   }
 
   onBind() {
@@ -124,7 +137,7 @@ export class Slide {
     this.activeLoad = this.activeLoad.bind(this);
 
     this.pauseSlide = this.pauseSlide.bind(this);
-    this.startSlide = this.startSlide.bind(this);
+    this.restartSlide = this.restartSlide.bind(this);
   }
 
   init() {
