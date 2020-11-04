@@ -100,35 +100,40 @@ export class Slide {
   }
 
   pauseSlide(event) {
-    if(event.type === 'mousedown')
-      event.preventDefault();
-    
+    if (event.type === "mousedown") event.preventDefault();
+
     clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
     this.messagePause(true);
   }
 
   messagePause(message = false) {
-    const messageTarget = document.createElement("div");
-    messageTarget.innerHTML = "Pausado";
-    messageTarget.classList.add("slide__message");
+    this.messageTarget = document.createElement("div");
+    this.messageTarget.innerHTML = "Pausado";
+    this.messageTarget.classList.add("slide__message");
 
-    if (message) {
-      return this.wrapper.appendChild(messageTarget);
-    }
+    if (message) this.wrapper.appendChild(this.messageTarget);
 
-    return this.wrapper.removeChild(this.wrapper.lastChild);
+    if (!message)
+      this.removeMessage();
+  }
+
+  removeMessage() {
+    const messageClass = this.messageTarget.getAttribute('class'); 
+    const itemRemove = this.wrapper.querySelector(`.${messageClass}`);
+
+    if(this.wrapper.contains(itemRemove))
+      this.wrapper.removeChild(itemRemove);
   }
 
   restartSlide(event) {
-    if(event.type === 'mouseup')
-      event.preventDefault();
+    if (event.type === "mouseup") event.preventDefault();
 
     const widthInitial = this.progressChild.style.width;
     const clearWidth = Number(widthInitial.replace("%", ""));
     const missingTime = 100 - clearWidth;
     const totalTime = Math.floor((this.totalTime * missingTime) / 100);
-    
+
     this.progressBar(clearWidth);
     this.autoSlide(totalTime);
     this.messagePause(false);
