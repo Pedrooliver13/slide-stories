@@ -79,31 +79,32 @@ export class Slide {
   }
 
   progressBar(widthIntial = 0) {
-    const total = "100%";
-    const insertTurbo = 0.5; // (totalTime / timeInterval) * 100;
+    const maxWidth = 100;
+    const timeInterval = 25;
+    const insertTurbo = (timeInterval * maxWidth) / this.totalTime; 
+
+    let startWidth = widthIntial;
+    clearInterval(this.timeBarProgress);
+    
     this.progressChild = this.divArray[this.index.active].firstChild;
-
-    let start = widthIntial;
-
-    clearTimeout(this.timeBarProgress);
     this.progressChild.style.width = widthIntial;
 
     this.timeBarProgress = setInterval(() => {
-      start += insertTurbo;
-      this.progressChild.style.width = `${start}%`;
-
-      if (start > total) {
-        this.progressChild.style.width = `${total}`;
-        clearTimeout(this.timeBarProgress);
+      startWidth += insertTurbo;
+      this.progressChild.style.width = `${startWidth}%`;
+      
+      if (startWidth > maxWidth) {
+        this.progressChild.style.width = `${maxWidth}%`;
+        clearInterval(this.timeBarProgress);
       }
-    }, 25);
+    }, timeInterval);
   }
 
   pauseSlide(event) {
     if (event.type === "mousedown") event.preventDefault();
 
-    clearInterval(this.timeBarProgress);
     clearTimeout(this.autoTime);
+    clearInterval(this.timeBarProgress);
     this.messagePause(true);
   }
 
@@ -112,7 +113,8 @@ export class Slide {
     this.messageTarget.innerHTML = "Pausado";
     this.messageTarget.classList.add("slide__message");
 
-    if (message) this.wrapper.appendChild(this.messageTarget);
+    if (message) 
+      this.wrapper.appendChild(this.messageTarget);
 
     if (!message)
       this.removeMessage();
@@ -128,14 +130,14 @@ export class Slide {
 
   restartSlide(event) {
     if (event.type === "mouseup") event.preventDefault();
-
+    
     const widthInitial = this.progressChild.style.width;
     const clearWidth = Number(widthInitial.replace("%", ""));
-    const missingTime = 100 - clearWidth;
-    const totalTime = Math.floor((this.totalTime * missingTime) / 100);
+    const missingWidth = Number(100 - clearWidth);
+    this.missingTime = (this.totalTime * missingWidth) / 100;
 
     this.progressBar(clearWidth);
-    this.autoSlide(totalTime);
+    this.autoSlide(this.missingTime);
     this.messagePause(false);
   }
 

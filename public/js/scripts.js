@@ -1,4 +1,4 @@
-import {SlideNav} from './module/slide.js';
+import { SlideNav } from "./module/slide.js";
 
 const slide = new SlideNav('[data-slide="slide"]', '[data-slide="container"]');
 slide.init();
