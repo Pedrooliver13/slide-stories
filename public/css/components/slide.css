@@ -42,7 +42,7 @@ body {
   justify-content: space-between;
   
 }
-.slide__wrapper .slide__controls div {
+.slide__wrapper .slide__controls button {
   width: 35%;
   height: 100vh;
   
